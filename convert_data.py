@@ -11,12 +11,12 @@ def convert_to_excel(df):
     return EXCEL_FILE
 def convert_to_xml(df):
     root=ET.Element("weather-data")
-    for index,row in df.iterrors():
+    for index,row in df.iterrows():
         city_element=ET.SubElement(root,"city")
-        ET.SubElement(city_element,"name")=str(row["City"])
-        ET.SubElement(city_element,"temperature")=str(row["Temperature"])
-        ET.SubElement(city_element,"humidity")=str(row["Humidity"])
-        ET.SubElement(city_element,"weather")=str(row["Weather"])
+        ET.SubElement(city_element,"name").text=str(row["City"])
+        ET.SubElement(city_element,"temperature").text=str(row["Temperature"])
+        ET.SubElement(city_element,"humidity").text=str(row["Humidity"])
+        ET.SubElement(city_element,"weather").text=str(row["Weather"])
     tree=ET.ElementTree(root)
     tree.write(XML_FILE)
     return XML_FILE
