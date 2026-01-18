@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Modern Weather App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .navbar-custom {
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand i {
+            font-size: 32px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .search-title {
+            color: #333;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .form-control, select {
+            border: 2px solid #e0e0e0 !important;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, select:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-search:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .weather-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .weather-main {
+            text-align: center;
+        }
+
+        .city-name {
+            color: #333;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .country-code {
+            color: #999;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .weather-condition {
+            color: #667eea;
+            font-size: 24px;
+            text-transform: capitalize;
+            margin-bottom: 20px;
+        }
+
+        .temperature-display {
+            font-size: 72px;
+            font-weight: bold;
+            color: #764ba2;
+            line-height: 1;
+        }
+
+        .feels-like {
+            color: #999;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .weather-icon {
+            text-align: center;
+        }
+
+        .weather-icon i {
+            font-size: 120px;
+            color: #ffc107;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .detail-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .detail-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .detail-icon {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .download-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .download-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-header {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .weather-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .temperature-display {
+                font-size: 48px;
+            }
+
+            .weather-icon i {
+                font-size: 80px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .tab-btn:hover {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar-custom">
+        <div class="main-container">
+            <div class="navbar-brand">
+                <i class="fas fa-cloud-sun"></i>
+                WeatherPro
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Search Section -->
+        <div class="search-card">
+            <h1 class="search-title">
+                <i class="fas fa-search"></i> Find Weather
+            </h1>
+
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/search" class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="country">Select Country:</label>
+                    <select class="form-control" id="country" name="country" onchange="updateCities()">
+                        <option value="">-- Choose Country --</option>
+                        {% for country in countries %}
+                        <option value="{{ country }}" {% if selected_country == country %}selected{% endif %}>{{ country }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">Select City:</label>
+                    <select class="form-control" id="city" name="selected_city">
+                        <option value="">-- Choose City --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="customCity">Search Any City:</label>
+                    <input type="text" class="form-control" id="customCity" name="city" placeholder="Type any city name..." value="{{ searched_city or '' }}" onkeypress="if(event.key === 'Enter') searchCity()">
+                </div>
+
+                <button type="button" class="btn-search" onclick="searchCity()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+
+        <!-- Weather Display Section -->
+        {% if data %}
+        <div class="weather-card">
+            <div style="text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #eee;">
+                <small style="color: #999; font-size: 12px;">Weather for</small>
+                <div style="font-size: 18px; color: #667eea; font-weight: 600;">{{ data.searched_city }}</div>
+            </div>
+            <div class="weather-header">
+                <div class="weather-main">
+                    <div class="city-name">{{ data.city }}</div>
+                    <div class="country-code">{{ data.country }}</div>
+                    <div class="weather-condition">{{ data.weather }}</div>
+                    <div class="temperature-display">{{ data.temperature }}°C</div>
+                    <div class="feels-like">Feels like {{ data.feels_like }}°C</div>
+                </div>
+                <div class="weather-icon">
+                    <i class="fas fa-cloud-sun"></i>
+                </div>
+            </div>
+
+            <!-- Detailed Weather Information -->
+            <div class="weather-details">
+                <div class="detail-box">
+                    <div class="detail-icon"><i class="fas fa-tint"></i></div>
+                    <div class="detail-label">Humidity</div>
+                    <div class="detail-value">{{ data.humidity }}%</div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-icon"><i class="fas fa-wind"></i></div>
+                    <div class="detail-label">Wind Speed</div>
+                    <div class="detail-value">{{ data.wind_speed }} m/s</div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-icon"><i class="fas fa-compress"></i></div>
+                    <div class="detail-label">Pressure</div>
+                    <div class="detail-value">{{ data.pressure }} hPa</div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="detail-label">Cloudiness</div>
+                    <div class="detail-value">{{ data.clouds }}%</div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-label"><i class="fas fa-sun"></i> Sunrise</div>
+                    <div class="info-value">{{ data.sunrise }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="fas fa-moon"></i> Sunset</div>
+                    <div class="info-value">{{ data.sunset }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
+                    <div class="info-value">{{ data.temperature }}°C</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="fas fa-droplet"></i> Weather</div>
+                    <div class="info-value">{{ data.weather | capitalize }}</div>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="download-section">
+                <div class="download-title">
+                    <i class="fas fa-download"></i> Export Weather Data
+                </div>
+                <div class="download-buttons">
+                    <a href="/download_csv" class="download-btn">
+                        <i class="fas fa-file-csv"></i> Download CSV
+                    </a>
+                    <a href="/download_excel" class="download-btn">
+                        <i class="fas fa-file-excel"></i> Download Excel
+                    </a>
+                    <a href="/download_xml" class="download-btn">
+                        <i class="fas fa-file-code"></i> Download XML
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        function updateCities() {
+            const country = document.getElementById('country').value;
+            const citySelect = document.getElementById('city');
+            const customCity = document.getElementById('customCity');
+            
+            if (!country) {
+                citySelect.innerHTML = '<option value="">-- Choose City --</option>';
+                return;
+            }
+
+            fetch(`/api/cities/${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    citySelect.innerHTML = '<option value="">-- Choose City --</option>';
+                    data.cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        citySelect.appendChild(option);
+                    });
+                    // Select the city if it exists in the list
+                    const searchedCity = customCity.value;
+                    if (searchedCity && data.cities.includes(searchedCity)) {
+                        citySelect.value = searchedCity;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function searchCity() {
+            const selectedCity = document.getElementById('city').value;
+            const customCity = document.getElementById('customCity').value.trim();
+            const country = document.getElementById('country').value;
+            
+            // Use selected city if available, otherwise use custom city input
+            const cityToSearch = selectedCity || customCity;
+            
+            if (!cityToSearch) {
+                alert('Please select a city from the list or enter a city name');
+                return;
+            }
+            
+            // Create form and submit
+            const form = document.getElementById('searchForm');
+            
+            // Set the form fields directly
+            const countryInput = form.querySelector('input[name="country"]');
+            if (countryInput) {
+                countryInput.value = country;
+            }
+            
+            // Set city value
+            if (selectedCity) {
+                document.getElementById('customCity').value = selectedCity;
+            }
+            
+            form.submit();
+        }
+
+        // Handle Enter key on both inputs
+        document.getElementById('customCity').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchCity();
+            }
+        });
+
+        document.getElementById('city').addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('customCity').value = this.value;
+            }
+        });
+
+        // Load cities if country was pre-selected
+        window.addEventListener('load', function() {
+            const country = document.getElementById('country').value;
+            const searchedCity = document.getElementById('customCity').value;
+            
+            if (country) {
+                // First load the cities
+                fetch(`/api/cities/${country}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const citySelect = document.getElementById('city');
+                        citySelect.innerHTML = '<option value="">-- Choose City --</option>';
+                        data.cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city;
+                            option.textContent = city;
+                            citySelect.appendChild(option);
+                        });
+                        // Select the city if it exists in the list
+                        if (searchedCity && data.cities.includes(searchedCity)) {
+                            citySelect.value = searchedCity;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    </script>
+</body>
+</html>
